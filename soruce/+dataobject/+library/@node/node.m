@@ -4,21 +4,21 @@ classdef node
     properties
         id_local
         id_global
-        x_position
-        y_position
-        z_position
+        cordinates
+        boundary_condition
+        force
     end
     
     methods
         %Constructor
-        function obj = node(id_local,id_global, x_position, ...
-                y_position,z_position)
+        function obj = node(id_local,id_global, cordinates, ...
+                boundary_condition,force)
             
             obj.id_local = id_local ;
             obj.id_global = id_global ;
-            obj.x_position = x_position ;
-            obj.y_position = y_position ;
-            obj.z_position = z_position ;
+            obj.cordinates = cordinates ;
+            obj.boundary_condition = boundary_condition ;
+            obj.force = force ;
         end
     end
     
@@ -28,17 +28,17 @@ classdef node
             arguments
                 options.id_local (1,1){mustBeReal} = 0;
                 options.id_global (1,1){mustBeReal} = 0;
-                options.x_position (1,1) {mustBeReal} = 0.5;
-                options.y_position (1,1) {mustBeReal} = 0.5;
-                options.z_position (1,1) {mustBeReal} = 0.5;
+                options.cordinates_in_mm (1,3) {mustBeReal} = [0 0 0];
+                options.boundary_condition (1,1) {mustBeReal} = 0;
+                options.force_in_N (1,1) {mustBeReal} = 0;
                 
             end
             obj = feval(mfilename('class'),...
                 options.id_local, ...
                 options.id_global, ...
-                options.x_position, ...
-                options.y_position, ...
-                options.z_position);
+                options.cordinates_in_mm, ...
+                options.boundary_condition, ...
+                options.force_in_N);
         end
         
     end
