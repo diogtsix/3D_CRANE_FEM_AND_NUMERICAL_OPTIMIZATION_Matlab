@@ -3,7 +3,9 @@ classdef preprocessor
     %   Detailed explanation goes here
     
     properties
-        Property1
+        number_of_nodes
+        nodes
+        elements
     end
     
     methods
