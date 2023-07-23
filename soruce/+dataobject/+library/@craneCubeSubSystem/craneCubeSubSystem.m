@@ -1,5 +1,5 @@
-classdef untitled
-    %UNTITLED Summary of this class goes here
+classdef craneCubeSubSystem
+    %CRANECUBESUBSYSTEM Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
@@ -7,8 +7,8 @@ classdef untitled
     end
     
     methods
-        function obj = untitled(inputArg1,inputArg2)
-            %UNTITLED Construct an instance of this class
+        function obj = craneCubeSubSystem(inputArg1,inputArg2)
+            %CRANECUBESUBSYSTEM Construct an instance of this class
             %   Detailed explanation goes here
             obj.Property1 = inputArg1 + inputArg2;
         end
