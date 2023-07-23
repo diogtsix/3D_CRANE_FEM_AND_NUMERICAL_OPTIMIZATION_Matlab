@@ -10,22 +10,37 @@ classdef preprocessor
     
     methods
         function obj = preprocessor(number_of_nodes,nodes,elements)
-            %PREPROCESSOR Construct an instance of this class
-            %   Detailed explanation goes here
+            %PREPROCESSOR Constructor
             obj.number_of_nodes = number_of_nodes;
-                        obj.nodes = nodes;
-
-                                    obj.elements = elements;
-
+            obj.nodes = nodes ;
+            obj.elements = elements ;
+            
         end
     end
     
-        methods (Static)
+    methods
+        function obj = create_crane(obj)
+            
+            obj.nodes = obj.create_node_matrix();
+            
+            %             obj.create_element_matrix();
+            %             obj.create_crane_base();
+            %             obj.create_crane_head();
+        end
+    end
+    methods
+        function nodeValue = create_node_matrix(obj)
+            % Getter method to access the 'nodes' property
+            nodeValue = 1;
+        end
+    end
+    
+    methods (Static)
         function obj = define(options)
             arguments
-                options.number_of_nodes (1,1){mustBeReal} = 0;
-                options.nodes  dataobject.library.node = [dataobject.library.node.define() dataobject.library.node.define()];
-                options.elements (1,1) {mustBeReal} = 1000 ;               
+                options.number_of_nodes (1,1) {mustBePositive} = 32 ;
+                options.nodes = [];
+                options.elements = [] ;
             end
             obj = feval(mfilename('class'),...
                 options.number_of_nodes, ...
@@ -33,5 +48,6 @@ classdef preprocessor
                 options.elements);
         end
     end
+    
 end
 
