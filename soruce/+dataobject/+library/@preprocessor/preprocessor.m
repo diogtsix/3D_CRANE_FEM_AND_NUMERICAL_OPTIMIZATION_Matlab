@@ -9,16 +9,28 @@ classdef preprocessor
     end
     
     methods
-        function obj = preprocessor(inputArg1,inputArg2)
+        function obj = preprocessor(number_of_nodes,nodes,elements)
             %PREPROCESSOR Construct an instance of this class
             %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
+            obj.number_of_nodes = number_of_nodes;
+                        obj.nodes = nodes;
+
+                                    obj.elements = elements;
+
         end
-        
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+    end
+    
+        methods (Static)
+        function obj = define(options)
+            arguments
+                options.number_of_nodes (1,1){mustBeReal} = 0;
+                options.nodes  dataobject.library.node = [dataobject.library.node.define() dataobject.library.node.define()];
+                options.elements (1,1) {mustBeReal} = 1000 ;               
+            end
+            obj = feval(mfilename('class'),...
+                options.number_of_nodes, ...
+                options.nodes, ...
+                options.elements);
         end
     end
 end
