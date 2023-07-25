@@ -1,4 +1,4 @@
-classdef element
+classdef element < generic
     %TRUSSELEMENT CLass
     
     properties

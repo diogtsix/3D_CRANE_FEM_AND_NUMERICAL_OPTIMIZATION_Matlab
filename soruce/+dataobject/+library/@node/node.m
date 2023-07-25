@@ -1,4 +1,4 @@
-classdef node
+classdef node < generic
     %NODE Class for each node
     
     properties
