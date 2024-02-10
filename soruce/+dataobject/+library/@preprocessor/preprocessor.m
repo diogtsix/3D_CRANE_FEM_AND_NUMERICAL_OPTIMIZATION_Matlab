@@ -61,7 +61,7 @@ classdef preprocessor < generic
                 options.number_of_nodes (1,1) {mustBePositive} = 32 ;
                 options.node_matrix = [];
                 options.elements_matrix = [] ;
-                options.type_of_elements string  = "truss_only"
+                options.type_of_elements string  = "truss only"
                 options.element_properties dataobject.library.element_properties = ...
                     dataobject.library.element_properties.define();
             end
