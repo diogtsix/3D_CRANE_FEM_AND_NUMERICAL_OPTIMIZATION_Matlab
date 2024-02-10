@@ -7,7 +7,7 @@ classdef element < generic
         surface
         length
         elastic_module
-        element_type
+        element_type % Type = Beam or Rod or Rope(ropes are modelled as elements)
         
     end
     

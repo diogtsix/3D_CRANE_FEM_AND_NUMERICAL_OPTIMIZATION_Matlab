@@ -1,6 +1,6 @@
 classdef preprocessor < generic
-    %PREPROCESSOR Summary of this class goes here
-    %   Detailed explanation goes here
+    %PREPROCESSOR Class for preprocessing a 3D Crane model in FEM Analysis
+    % This class handles input data, crane geometry generation, and preparation for analysis.
     
     properties
         number_of_nodes
@@ -19,70 +19,42 @@ classdef preprocessor < generic
                 element_properties)
             %PREPROCESSOR Constructor
             obj.number_of_nodes = number_of_nodes;
-            obj.node_matrix = node_matrix ;
+            obj.node_matrix =  node_matrix ;
             obj.elements_matrix = elements_matrix ;
             obj.type_of_elements = type_of_elements;
             
             obj.element_properties = element_properties;
-        end
-    end
-    
-    methods
-        function obj = create_crane(obj)
             
-            obj.node_matrix = obj.create_node_matrix();
-            
-            %             obj.create_element_matrix();
-            %             obj.create_crane_base();
-            %             obj.create_crane_head();
+            obj.node_matrix = obj.createNodeMatrix();
+            obj.elements_matrix = obj.createElementMatrix();
         end
+        
     end
     methods
-        function val = create_node_matrix(obj)
-            % Getter method to access the 'nodes_matrix' property
-            nodeMatrix = dataobject.library.node.empty(obj.number_of_nodes, 0);
-            %% Set Node iD
-            for i = 1:obj.number_of_nodes
-                
-                nodeMatrix(i) = dataobject.library.node.define("id_global", i);
-                
-            end
-            %% Initialize steady value properties
-            L = obj.element_properties.rod_length;
-            phi = obj.element_properties.crane_angle;
-            
-            %% Node Cordinates
-            %% Crane Base
-            nodeMatrix(1).cordinates = [0 -L/2 0];
-            nodeMatrix(2).cordinates = [0 L/2 0];
-            %% Crane Body
-            Level = 0;
-            for i = 1:(obj.number_of_nodes-8)/4 % i planes for the crane body
-                rotating_vector = [1 2 3 4];
-                nodeMatrix(rotating_vector(1)+2+Level).cordinates(1) = L/2;
-                nodeMatrix(rotating_vector(2)+2+Level).cordinates(1) = L/2;
-                
-                nodeMatrix(rotating_vector(3)+2+Level).cordinates(1) = -L/2;
-                nodeMatrix(rotating_vector(4)+2+Level).cordinates(1) = -L/2;
-                
-                nodeMatrix(2+2+Level).cordinates(2) = L/2;
-                nodeMatrix(3+2+Level).cordinates(2) = L/2;
-                
-                nodeMatrix(1+2+Level).cordinates(2) = -L/2;
-                nodeMatrix(4+2+Level).cordinates(2) = -L/2;
-                
-                nodeMatrix(rotating_vector(1)+2+Level).cordinates(3) = L*i;
-                nodeMatrix(rotating_vector(2)+2+Level).cordinates(3) = L*i;
-                nodeMatrix(rotating_vector(3)+2+Level).cordinates(3) = L*i;
-                nodeMatrix(rotating_vector(4)+2+Level).cordinates(3) = L*i;
-
-                Level = Level+4;
-            end
-            
-            val = nodeMatrix;
+        function nodeMatrix = createNodeMatrix(obj)
+            nodeMatrix = dataobject.library.utilities.createNodeMatrix(obj);
+%             nodeMatrix = 0;
         end
+        
+        function elemenMatrix = createElementMatrix(obj)
+            elemenMatrix = dataobject.library.utilities.createElementMatrix(obj);
+        end
+        
     end
     
+%     methods
+%         
+%         
+%         function create_crane_base(obj)
+%             % Method to generate the crane base
+%             % Placeholder for implementation
+%         end
+%         
+%         function create_crane_head(obj)
+%             % Method to generate the crane head
+%             % Placeholder for implementation
+%         end
+%     end
     methods (Static)
         function obj = define(options)
             arguments
