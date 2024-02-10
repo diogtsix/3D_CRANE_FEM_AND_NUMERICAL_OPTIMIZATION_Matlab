@@ -45,19 +45,12 @@ classdef preprocessor < generic
         
     end
     
-%     methods
-%         
-%         
-%         function create_crane_base(obj)
-%             % Method to generate the crane base
-%             % Placeholder for implementation
-%         end
-%         
-%         function create_crane_head(obj)
-%             % Method to generate the crane head
-%             % Placeholder for implementation
-%         end
-%     end
+    methods 
+        function visualizeCrane(obj)
+            dataobject.library.utilities.visualizeCrane(obj)
+        end
+        
+    end
     methods (Static)
         function obj = define(options)
             arguments
