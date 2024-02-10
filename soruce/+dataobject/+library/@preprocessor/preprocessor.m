@@ -54,7 +54,7 @@ classdef preprocessor < generic
     methods (Static)
         function obj = define(options)
             arguments
-                options.number_of_nodes (1,1) {mustBePositive} = 32 ;
+                options.number_of_nodes (1,1) {mustBePositive} = 32;
                 options.node_matrix = [];
                 options.number_of_elements (1,1) {mustBeReal} = 122;
                 options.elements_matrix = [] ;

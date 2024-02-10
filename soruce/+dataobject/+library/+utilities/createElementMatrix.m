@@ -8,8 +8,8 @@ elementArray = repmat(dataobject.library.element.define(), obj.number_of_element
 %% Initialize steady value properties
 length = obj.element_properties.rod_length;
 phi = obj.element_properties.crane_angle;
-surface = obj.element_properties.non_diagonal_rods_surface ; 
-surfaceDigonal = obj.element_properties.diagonal_rods_surface ; 
+surface = obj.element_properties.non_diagonal_rods_surface ;
+surfaceDigonal = obj.element_properties.diagonal_rods_surface ;
 elasticityModulus = obj.element_properties.Young_modulus_E;
 
 %% Elements Base
@@ -36,55 +36,66 @@ for a = 1:2
     end
 end
 
-%% BODY Elements 
-%-------------Horizontal ELements XY Plane 
-currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
+%% BODY Elements
+%-------------Horizontal ELements XY Plane
 D = [3 4 5 6];
-
-for i = currentElementID:(currentElementID + 3)
-    elementArray(i) = dataobject.library.element.define(...
-        'element_id', i, ...
-        'nodes', [obj.node_matrix(D(1)), obj.node_matrix(D(2))], ...
-        'surface_in_mm2', surface, ...
-        'elastic_module_in_N_mm2', elasticityModulus);
-    D = circshift(D, -1);
-end
-
-%-------------Diagonal ELements XY Plane 
-currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
-for i = currentElementID:(currentElementID + 1)
-    elementArray(i) = dataobject.library.element.define(...
-        'element_id', i, ...
-        'nodes', [obj.node_matrix(D(i - currentElementID + 1)), obj.node_matrix(D(i - currentElementID + 3))], ...
-        'surface_in_mm2', surfaceDigonal, ... % Assuming Ad is defined
-        'elastic_module_in_N_mm2', elasticityModulus);
-end
-%-------------Vertical ELements Z Axis
-currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
-for i = currentElementID:(currentElementID + 3)
-    elementArray(i) = dataobject.library.element.define(...
-        'element_id', i, ...
-        'nodes', [obj.node_matrix(D(i - currentElementID + 1)), obj.node_matrix(D(i - currentElementID + 1) + 4)], ...
-        'surface_in_mm2', surface, ...
-        'elastic_module_in_N_mm2', elasticityModulus);
-end
-%-------------Diagonal Elements Sides
-
-currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
-for i = currentElementID:(currentElementID + 7)
-    if i <= currentElementID + 3
-        secondNodeIndex = D(mod(i - currentElementID, 4) + 1) + 5;
-    else
-        secondNodeIndex = D(mod(i - currentElementID - 4, 4) + 1) + 3;
+for ii = 1:(obj.number_of_nodes -8)/4 - 1
+    currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
+    
+    
+    for i = currentElementID:(currentElementID + 3)
+        elementArray(i) = dataobject.library.element.define(...
+            'element_id', i, ...
+            'nodes', [obj.node_matrix(D(1)), obj.node_matrix(D(2))], ...
+            'surface_in_mm2', surface, ...
+            'elastic_module_in_N_mm2', elasticityModulus);
+        D = circshift(D, -1);
     end
-    elementArray(i) = dataobject.library.element.define(...
-        'element_id', i, ...
-        'nodes', [obj.node_matrix(D(mod(i - currentElementID, 4) + 1)), obj.node_matrix(secondNodeIndex)], ...
-        'surface_in_mm2', surfaceDigonal, ...
-        'elastic_module_in_N_mm2', elasticityModulus);
+    
+    %-------------Diagonal ELements XY Plane
+    currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
+    for i = currentElementID:(currentElementID + 1)
+        elementArray(i) = dataobject.library.element.define(...
+            'element_id', i, ...
+            'nodes', [obj.node_matrix(D(i - currentElementID + 1)), obj.node_matrix(D(i - currentElementID + 3))], ...
+            'surface_in_mm2', surfaceDigonal, ... % Assuming Ad is defined
+            'elastic_module_in_N_mm2', elasticityModulus);
+    end
+    %-------------Vertical ELements Z Axis
+    currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
+    for i = currentElementID:(currentElementID + 3)
+        elementArray(i) = dataobject.library.element.define(...
+            'element_id', i, ...
+            'nodes', [obj.node_matrix(D(i - currentElementID + 1)), obj.node_matrix(D(i - currentElementID + 1) + 4)], ...
+            'surface_in_mm2', surface, ...
+            'elastic_module_in_N_mm2', elasticityModulus);
+    end
+    %-------------Diagonal Elements Sides
+    
+    currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
+    
+    j = 1;
+    
+    for i = currentElementID:(currentElementID + 7)
+        if i <= currentElementID + 3
+            node1Indexes = D ;
+            node2Indexes = circshift(D,-1)+4 ;
+        else
+            node1Indexes = D ;
+            node2Indexes = circshift(D,1)+4 ;
+        end
+        elementArray(i) = dataobject.library.element.define(...
+            'element_id', i, ...
+            'nodes', [obj.node_matrix(node1Indexes(j)), obj.node_matrix(node2Indexes(j))], ...
+            'surface_in_mm2', surfaceDigonal, ...
+            'elastic_module_in_N_mm2', elasticityModulus);
+        j = j+1;
+        if j > 4
+            j = 1;
+        end
+    end
+    D = D + 4;
 end
-D = D + 4;
-
 %% Elements in the last top plane
 %---------------------Horizontal
 currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
@@ -113,7 +124,7 @@ for i = currentElementID:(currentElementID + 3)
     if i == currentElementID || i == currentElementID + 3
         s = surface;
     else
-        s = surfaceDigonal; 
+        s = surfaceDigonal;
     end
     
     elementArray(i) = dataobject.library.element.define(...
@@ -128,11 +139,11 @@ currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
 
 for i = currentElementID:(currentElementID + 3)
     
-        
-    if i == currentElementID || i == currentElementID + 3 
+    
+    if i == currentElementID || i == currentElementID + 3
         s = surfaceDigonal;
     else
-        s = surface; 
+        s = surface;
     end
     
     elementArray(i) = dataobject.library.element.define(...
@@ -149,6 +160,24 @@ elementArray(currentElementID) = dataobject.library.element.define(...
     'nodes', [obj.node_matrix(obj.number_of_nodes - 5), obj.node_matrix(obj.number_of_nodes - 4)], ...
     'surface_in_mm2', surface, ...
     'elastic_module_in_N_mm2', elasticityModulus);
+
+tipNode = obj.number_of_nodes - 3;
+nodesToTip = [ ...
+    D(1), ...
+    D(2), ...
+    obj.number_of_nodes - 5, ...
+    obj.number_of_nodes - 4];
+
+% ------------- Tip Node
+currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
+for i = currentElementID:(currentElementID + 3)
+    elementArray(i) = dataobject.library.element.define(...
+        'element_id', i, ...
+        'nodes', [obj.node_matrix(nodesToTip(1)), obj.node_matrix(tipNode)], ...
+        'surface_in_mm2', surface, ... % Assuming Ad is defined
+        'elastic_module_in_N_mm2', elasticityModulus);
+    nodesToTip = circshift(nodesToTip, -1) ;
+end
 
 %% Ropes
 currentElementID = numel(nonzeros([elementArray.element_id])) + 1;
@@ -171,7 +200,7 @@ elementArray(currentElementID + 1) = dataobject.library.element.define(...
 for i = currentElementID + 2:currentElementID + 3
     
     secondNodeIndex = 26 * (i == (currentElementID + 2)) + 25 * (i ~= (currentElementID + 2));
-
+    
     elementArray(i) = dataobject.library.element.define(...
         'element_id', i, ...
         'nodes', [obj.node_matrix(obj.number_of_nodes - 1), obj.node_matrix(secondNodeIndex)], ...
@@ -179,6 +208,6 @@ for i = currentElementID + 2:currentElementID + 3
         'elastic_module_in_N_mm2', elasticityModulus);
 end
 
-elementMatrix = elementArray; 
+elementMatrix = elementArray;
 end
 
