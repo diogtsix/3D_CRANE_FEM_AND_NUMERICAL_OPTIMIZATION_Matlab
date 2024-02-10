@@ -5,6 +5,7 @@ classdef preprocessor < generic
     properties
         number_of_nodes
         node_matrix
+        number_of_elements
         elements_matrix
         type_of_elements
     end
@@ -15,11 +16,13 @@ classdef preprocessor < generic
     
     
     methods
-        function obj = preprocessor(number_of_nodes,node_matrix,elements_matrix, type_of_elements, ...
+        function obj = preprocessor(number_of_nodes,node_matrix, number_of_elements, ...
+                elements_matrix, type_of_elements, ...
                 element_properties)
             %PREPROCESSOR Constructor
             obj.number_of_nodes = number_of_nodes;
             obj.node_matrix =  node_matrix ;
+            obj.number_of_elements = number_of_elements;
             obj.elements_matrix = elements_matrix ;
             obj.type_of_elements = type_of_elements;
             
@@ -33,10 +36,10 @@ classdef preprocessor < generic
     methods
         function nodeMatrix = createNodeMatrix(obj)
             nodeMatrix = dataobject.library.utilities.createNodeMatrix(obj);
-%             nodeMatrix = 0;
         end
         
         function elemenMatrix = createElementMatrix(obj)
+            
             elemenMatrix = dataobject.library.utilities.createElementMatrix(obj);
         end
         
@@ -60,6 +63,7 @@ classdef preprocessor < generic
             arguments
                 options.number_of_nodes (1,1) {mustBePositive} = 32 ;
                 options.node_matrix = [];
+                options.number_of_elements (1,1) {mustBeReal} = 122;
                 options.elements_matrix = [] ;
                 options.type_of_elements string  = "truss only"
                 options.element_properties dataobject.library.element_properties = ...
@@ -68,6 +72,7 @@ classdef preprocessor < generic
             obj = feval(mfilename('class'),...
                 options.number_of_nodes, ...
                 options.node_matrix, ...
+                options.number_of_elements, ...
                 options.elements_matrix, ...
                 options.type_of_elements, ...
                 options.element_properties);

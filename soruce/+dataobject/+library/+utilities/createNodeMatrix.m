@@ -90,3 +90,10 @@ end
 for idx = 1: obj.number_of_nodes-3
         nodeMatrix(idx).cordinates(1) = nodeMatrix(idx).cordinates(1) + obj.element_properties.rope_rigid_point_x_pos;             
 end
+
+%% Calculate Num of elements 
+cubes=(i-1)*12;
+base=9;
+ropes=4;
+head=13;
+obj.number_of_elements = i*6+cubes+base+head+ropes;
