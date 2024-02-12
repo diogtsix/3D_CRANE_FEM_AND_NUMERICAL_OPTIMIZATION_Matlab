@@ -33,7 +33,8 @@ classdef preprocessor < generic
         end
         
     end
-    methods
+    %% Matrices consruction Methods 
+    methods 
         function nodeMatrix = createNodeMatrix(obj)
             nodeMatrix = dataobject.library.utilities.createNodeMatrix(obj);
         end
@@ -44,13 +45,26 @@ classdef preprocessor < generic
         end
         
     end
-    
-    methods 
+    %% Visualize the crane after Matrix Construction 
+    methods
         function visualizeCrane(obj)
             dataobject.library.utilities.visualizeCrane(obj)
         end
-        
     end
+    %% Add Force to the crane 
+    methods 
+        function obj = inputForce(obj)
+            % Check if crane is open
+            fig = findobj('Type', 'Figure');
+            
+            if isempty(fig)
+                obj.visualizeCrane()
+            end
+            % Force function
+            dataobject.library.utilities.inputForce(obj)
+        end
+    end
+    
     methods (Static)
         function obj = define(options)
             arguments
