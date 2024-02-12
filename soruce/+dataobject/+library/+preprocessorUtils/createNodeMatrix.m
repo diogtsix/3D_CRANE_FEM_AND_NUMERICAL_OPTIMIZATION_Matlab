@@ -78,7 +78,7 @@ nodeMatrix(29).force(3) = 0;
 
 %% Crane Rotation
 
-for idx = 1: obj.number_of_nodes-3
+for idx = 3: obj.number_of_nodes-3
     
     xRotation = nodeMatrix(idx).cordinates(1)*cos(pi/2-phi) + nodeMatrix(idx).cordinates(3)*sin(pi/2-phi);
     zRotation = nodeMatrix(idx).cordinates(3)*cos(pi/2-phi) - nodeMatrix(idx).cordinates(1)*sin(pi/2-phi);
