@@ -36,19 +36,19 @@ classdef preprocessor < generic
     %% Matrices consruction Methods 
     methods 
         function nodeMatrix = createNodeMatrix(obj)
-            nodeMatrix = dataobject.library.utilities.createNodeMatrix(obj);
+            nodeMatrix = dataobject.library.preprocessorUtils.createNodeMatrix(obj);
         end
         
         function elemenMatrix = createElementMatrix(obj)
             
-            elemenMatrix = dataobject.library.utilities.createElementMatrix(obj);
+            elemenMatrix = dataobject.library.preprocessorUtils.createElementMatrix(obj);
         end
         
     end
     %% Visualize the crane after Matrix Construction 
     methods
         function visualizeCrane(obj)
-            dataobject.library.utilities.visualizeCrane(obj)
+            dataobject.library.preprocessorUtils.visualizeCrane(obj)
         end
     end
     %% Add Force to the crane 
@@ -61,7 +61,7 @@ classdef preprocessor < generic
                 obj.visualizeCrane()
             end
             % Force function
-            dataobject.library.utilities.inputForce(obj)
+            dataobject.library.preprocessorUtils.inputForce(obj)
         end
     end
     
