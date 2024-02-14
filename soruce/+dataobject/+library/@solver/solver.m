@@ -50,9 +50,6 @@ classdef solver < generic
 
             obj = dataobject.library.solverUtils.structuralCalculations(obj);
         end
-        
-        
-        
     end
     
     methods (Static)

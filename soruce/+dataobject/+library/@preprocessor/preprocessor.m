@@ -47,8 +47,8 @@ classdef preprocessor < generic
     end
     %% Visualize the crane after Matrix Construction 
     methods
-        function visualizeCrane(obj)
-            dataobject.library.preprocessorUtils.visualizeCrane(obj)
+        function visualizeCrane(obj, coord) % coord = "cordinates" or "displacedCoord"
+            dataobject.library.preprocessorUtils.visualizeCrane(obj , coord )
         end
     end
     %% Add Force to the crane 
@@ -58,7 +58,7 @@ classdef preprocessor < generic
             fig = findobj('Type', 'Figure');
             
             if isempty(fig)
-                obj.visualizeCrane()
+                obj.visualizeCrane("cordinates")
             end
             % Force function
             dataobject.library.preprocessorUtils.inputForce(obj)
