@@ -11,6 +11,7 @@ classdef solver < generic
         strainMatrix
         stressMatrix
         reactionMatrix
+        totalReaction
     end
     
     methods
@@ -27,6 +28,7 @@ classdef solver < generic
             obj.strainMatrix = [];
             obj.stressMatrix = [];
             obj.reactionMatrix = [];
+            obj.totalReaction = [];
             
             obj.globalStiffnessMatrix = obj.stiffnessMatrix();
             

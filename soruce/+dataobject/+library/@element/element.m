@@ -12,6 +12,7 @@ classdef element < generic
     
     properties (Dependent)
         length          % Length of the element, dynamically calculated
+        deformedLength  % deformedLength of the Deformed element, dynamically calculated
     end
     
     methods
@@ -34,6 +35,17 @@ classdef element < generic
                 length = norm(node1Coords - node2Coords);
             else
                 length = NaN; % Return NaN if the nodes are not properly defined
+            end
+        end
+        
+        function deformedLength = get.deformedLength(obj)
+            % Getter method for length property
+            if size(obj.nodes,2) == 2 && ~isempty(obj.nodes(1).displacedCoord) && ~isempty(obj.nodes(2).displacedCoord)
+                node1Coords = obj.nodes(1).displacedCoord;
+                node2Coords = obj.nodes(2).displacedCoord;
+                deformedLength = norm(node1Coords - node2Coords);
+            else
+                deformedLength = NaN; % Return NaN if the nodes are not properly defined
             end
         end
         
