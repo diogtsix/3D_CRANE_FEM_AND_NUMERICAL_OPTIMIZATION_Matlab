@@ -1,23 +1,49 @@
-classdef node
-    %NODE Summary of this class goes here
-    %   Detailed explanation goes here
+classdef node < generic
+    %NODE Class for each node
     
     properties
-        Property1
+        id_local
+        id_global
+        cordinates
+        displacedCoord
+        boundary_condition
+        force
     end
     
     methods
-        function obj = node(inputArg1,inputArg2)
-            %NODE Construct an instance of this class
-            %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
-        end
-        
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+        %Constructor
+        function obj = node(id_local,id_global, cordinates, ...
+                displacedCoord, boundary_condition,force)
+            
+            obj.id_local = id_local ;
+            obj.id_global = id_global ;
+            obj.cordinates = cordinates ;
+            obj.displacedCoord = displacedCoord;
+            obj.boundary_condition = boundary_condition ;
+            obj.force = force ;
         end
     end
+    
+    methods (Static)
+        %Define attributes
+        function obj = define(options)
+            arguments
+                options.id_local (1,1){mustBeReal} = 0;
+                options.id_global (1,1){mustBeReal} = 0;
+                options.cordinates_in_mm (1,3) {mustBeReal} = [0 0 0];
+                options.displacedCoord_in_mm (1,3) {mustBeReal} = [0 0 0];
+                options.boundary_condition (1,3) {mustBeReal} = [0 0 0];
+                options.force_in_N (1,3) {mustBeReal} = [0 0 0];
+                
+            end
+            obj = feval(mfilename('class'),...
+                options.id_local, ...
+                options.id_global, ...
+                options.cordinates_in_mm, ...
+                options.displacedCoord_in_mm, ...
+                options.boundary_condition, ...
+                options.force_in_N);
+        end
+        
+    end
 end
-

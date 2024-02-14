@@ -3,7 +3,11 @@ classdef trussElement
     %   Detailed explanation goes here
     
     properties
-        Property1
+        element_id
+        nodes
+        surface
+        elastcity
+        
     end
     
     methods
