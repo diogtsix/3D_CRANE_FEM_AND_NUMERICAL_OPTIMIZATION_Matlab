@@ -17,6 +17,7 @@ for i = 1:obj.number_of_elements
     ColorMin = (scale(node1) - Min) / (Max - Min);
     ColorMax = (scale(node2) - Min) / (Max - Min);
     
+    
     % Coordinates
     vertices(2*i-1, :) = obj.node_matrix(node1).displacedCoord;
     vertices(2*i, :) = obj.node_matrix(node2).displacedCoord;

@@ -4,24 +4,27 @@ function axisDisplacements(obj)
 fig = figure;
 
 nexttile
-visualizeCrane(obj.solver.preprocessor,"cordinates", "Undeformed" ,[])
-
-nexttile
 Ux = obj.solver.displacedNodeMatrix(:,1);
 
 visualizeCrane(obj.solver.preprocessor,"displacedCoord", "Ux", Ux)
 
-% nexttile
-% Uy = obj.solver.displacedNodeMatrix(:,2);
-%
-% visualizeCrane(obj.solver.preprocessor,"displacedCoord", "Uy",Uy)
-%
-% nexttile
-% Uz = obj.solver.displacedNodeMatrix(:,3);
-%
-% visualizeCrane(obj.solver.preprocessor,"displacedCoord", "Uz",Uz)
-%
-% fig.Children.Title.String = 'Ux - Uy - Uz Displacements';
+nexttile
+Uy = obj.solver.displacedNodeMatrix(:,2);
+
+visualizeCrane(obj.solver.preprocessor,"displacedCoord", "Uy",Uy)
+
+nexttile
+Uz = obj.solver.displacedNodeMatrix(:,3);
+
+visualizeCrane(obj.solver.preprocessor,"displacedCoord", "Uz",Uz)
+
+
+nexttile
+Utotal = sqrt(Ux.^2+Uy.^2+Uz.^2);
+
+visualizeCrane(obj.solver.preprocessor,"displacedCoord", "U_{total}" ,Utotal)
+
+fig.Children.Title.String = 'Ux - Uy - Uz Displacements';
 end
 
 
@@ -63,7 +66,7 @@ else
     
     caxis([Min Max]);
     D = colorbar;
-    ylabel(D, FigName + '[mm] Displacement')
+    ylabel(D, FigName + ' [mm] Dsiplacement')
     camproj('orthographic')
 end
 

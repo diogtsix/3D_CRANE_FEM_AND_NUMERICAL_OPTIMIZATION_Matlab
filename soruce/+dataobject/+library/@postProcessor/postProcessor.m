@@ -12,13 +12,13 @@ classdef postProcessor < generic
             
             obj.solver = solverObj;
             obj.scaleFactor = scaleFactor;
-            obj.scale(); 
-        end  
+            obj.scale();
+        end
     end
     
     methods
         function scale(obj)
-            %% Apply Scale Factor 
+            %% Apply Scale Factor
             if obj.scaleFactor ~= 0
                 dofs = numel(obj.solver.preprocessor.node_matrix(1).cordinates);
                 
@@ -28,7 +28,7 @@ classdef postProcessor < generic
                         obj.solver.preprocessor.node_matrix(ii).cordinates + ...
                         obj.scaleFactor * obj.solver.displacedNodeMatrix(ii, 1:dofs);
                 end
-            end            
+            end
         end
         
         function visualizeAll(obj)
@@ -36,11 +36,19 @@ classdef postProcessor < generic
         end
         
         function undeformedDeformed(obj)
-            dataobject.library.postProcessorUtils.undeformedDeformedCrane(obj)        
+            dataobject.library.postProcessorUtils.undeformedDeformedCrane(obj)
         end
-            function axisDisplacements(obj)
-            dataobject.library.postProcessorUtils.axisDisplacements(obj)        
-        end    
+        function axisDisplacements(obj)
+            dataobject.library.postProcessorUtils.axisDisplacements(obj)
+        end
+        
+        function strains(obj)
+            dataobject.library.postProcessorUtils.strains(obj)
+        end
+        
+        function stresses(obj)
+            dataobject.library.postProcessorUtils.stresses(obj)
+        end
     end
     
     
