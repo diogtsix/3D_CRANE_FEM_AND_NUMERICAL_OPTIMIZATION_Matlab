@@ -58,7 +58,7 @@ classdef preprocessor < generic
             fig = findobj('Type', 'Figure');
             
             if isempty(fig)
-                obj.visualizeCrane()
+                obj.visualizeCrane("cordinates")
             end
             % Force function
             dataobject.library.preprocessorUtils.inputForce(obj)
