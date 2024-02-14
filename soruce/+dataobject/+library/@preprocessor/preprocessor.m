@@ -1,23 +1,90 @@
-classdef preprocessor
-    %PREPROCESSOR Summary of this class goes here
-    %   Detailed explanation goes here
+classdef preprocessor < generic
+    %PREPROCESSOR Class for preprocessing a 3D Crane model in FEM Analysis
+    % This class handles input data, crane geometry generation, and preparation for analysis.
     
     properties
-        Property1
+        number_of_nodes
+        node_matrix
+        number_of_elements
+        elements_matrix
+        type_of_elements
+    end
+    properties
+        %class property
+        element_properties
     end
     
+    
     methods
-        function obj = preprocessor(inputArg1,inputArg2)
-            %PREPROCESSOR Construct an instance of this class
-            %   Detailed explanation goes here
-            obj.Property1 = inputArg1 + inputArg2;
+        function obj = preprocessor(number_of_nodes,node_matrix, number_of_elements, ...
+                elements_matrix, type_of_elements, ...
+                element_properties)
+            %PREPROCESSOR Constructor
+            obj.number_of_nodes = number_of_nodes;
+            obj.node_matrix =  node_matrix ;
+            obj.number_of_elements = number_of_elements;
+            obj.elements_matrix = elements_matrix ;
+            obj.type_of_elements = type_of_elements;
+            
+            obj.element_properties = element_properties;
+            
+            obj.node_matrix = obj.createNodeMatrix();
+            obj.elements_matrix = obj.createElementMatrix();
         end
         
-        function outputArg = method1(obj,inputArg)
-            %METHOD1 Summary of this method goes here
-            %   Detailed explanation goes here
-            outputArg = obj.Property1 + inputArg;
+    end
+    %% Matrices consruction Methods 
+    methods 
+        function nodeMatrix = createNodeMatrix(obj)
+            nodeMatrix = dataobject.library.preprocessorUtils.createNodeMatrix(obj);
+        end
+        
+        function elemenMatrix = createElementMatrix(obj)
+            
+            elemenMatrix = dataobject.library.preprocessorUtils.createElementMatrix(obj);
+        end
+        
+    end
+    %% Visualize the crane after Matrix Construction 
+    methods
+        function visualizeCrane(obj)
+            dataobject.library.preprocessorUtils.visualizeCrane(obj)
         end
     end
+    %% Add Force to the crane 
+    methods 
+        function obj = inputForce(obj)
+            % Check if crane is open
+            fig = findobj('Type', 'Figure');
+            
+            if isempty(fig)
+                obj.visualizeCrane()
+            end
+            % Force function
+            dataobject.library.preprocessorUtils.inputForce(obj)
+        end
+    end
+    
+    methods (Static)
+        function obj = define(options)
+            arguments
+                options.number_of_nodes (1,1) {mustBePositive} = 32;
+                options.node_matrix = [];
+                options.number_of_elements (1,1) {mustBeReal} = 122;
+                options.elements_matrix = [] ;
+                options.type_of_elements string  = "truss only"
+                options.element_properties dataobject.library.element_properties = ...
+                    dataobject.library.element_properties.define();
+            end
+            obj = feval(mfilename('class'),...
+                options.number_of_nodes, ...
+                options.node_matrix, ...
+                options.number_of_elements, ...
+                options.elements_matrix, ...
+                options.type_of_elements, ...
+                options.element_properties);
+        end
+    end
+    
 end
 
