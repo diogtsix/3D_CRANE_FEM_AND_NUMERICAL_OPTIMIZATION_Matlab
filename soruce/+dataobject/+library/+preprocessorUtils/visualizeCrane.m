@@ -1,4 +1,4 @@
-function visualizeCrane(obj)
+function visualizeCrane(obj, coord)
 %VISUALIZECRANE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -17,13 +17,13 @@ hold on
 
 % Circle the nodes
 for i = 1:numel(nodeMatrix)
-    scatter3(nodeMatrix(i).cordinates(1), nodeMatrix(i).cordinates(2), nodeMatrix(i).cordinates(3), 'filled', 'r')
+    scatter3(nodeMatrix(i).(coord)(1), nodeMatrix(i).(coord)(2), nodeMatrix(i).(coord)(3), 'filled', 'r')
 end
 
 % Visual creation of the crane
 for i = 1:numel(elementArray)
-    node1 = elementArray(i).nodes(1).cordinates;
-    node2 = elementArray(i).nodes(2).cordinates;
+    node1 = elementArray(i).nodes(1).(coord);
+    node2 = elementArray(i).nodes(2).(coord);
     lineWidth = 2*(elementArray(i).surface == Ay) + 0.5*(elementArray(i).surface ~= Ay);
     line([node1(1), node2(1)], [node1(2), node2(2)], [node1(3), node2(3)], 'LineWidth', lineWidth)
 end
