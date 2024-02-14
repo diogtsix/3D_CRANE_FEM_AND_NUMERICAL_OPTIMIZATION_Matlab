@@ -38,7 +38,9 @@ classdef postProcessor < generic
         function undeformedDeformed(obj)
             dataobject.library.postProcessorUtils.undeformedDeformedCrane(obj)        
         end
-        
+            function axisDisplacements(obj)
+            dataobject.library.postProcessorUtils.axisDisplacements(obj)        
+        end    
     end
     
     
