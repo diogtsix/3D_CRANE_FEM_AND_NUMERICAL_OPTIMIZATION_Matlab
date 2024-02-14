@@ -39,8 +39,8 @@ end
 function obj = defaultForces(obj)
 % Define the default forces applied to the nodes
 % Implement the logic for default force settings here
-obj.node_matrix(obj.number_of_nodes - 3).force(3) = - 1000;
-visualizeForces(obj.node_matrix(29).cordinates , - 1000, 3);
+obj.node_matrix(obj.number_of_nodes - 3).force(3) = - 20*1e3;
+visualizeForces(obj.node_matrix(29).cordinates , - 20*1e3, 3);
 end
 
 function numForces = numberOfForces()

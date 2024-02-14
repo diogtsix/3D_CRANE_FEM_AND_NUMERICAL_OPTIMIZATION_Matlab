@@ -65,11 +65,11 @@ for idx = 1:numel(ropeIndices)
 end
 
 %% Boundary Conditions
-for idx = 1:numel(ropeIndices)
+for idx = [1 ropeIndices]
     nodeMatrix(idx).boundary_condition(:) = 1 ;
 end
 for idx = [1 3]
-    nodeMatrix(idx).boundary_condition(2) = 1 ;
+    nodeMatrix(2).boundary_condition(idx) = 1 ;
     
 end
 

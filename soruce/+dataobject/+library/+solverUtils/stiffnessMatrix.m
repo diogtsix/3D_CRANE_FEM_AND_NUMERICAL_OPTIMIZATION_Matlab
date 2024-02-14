@@ -19,10 +19,10 @@ for ii  = 1: elementNum
     
     
     % Create FEA Trasnform for truss elements
-        directionCosines = (secondNode.cordinates - firstNode.cordinates) / Le;
+        directionCosines = (firstNode.cordinates - secondNode.cordinates) / Le;
     
-    T=[directionCosines(1) directionCosines(2) directionCosines(3) 0 0 0;
-        0 0 0 directionCosines(1) directionCosines(2) directionCosines(3)];
+    T=[directionCosines 0 0 0;
+        0 0 0 directionCosines];
     
     
     % Truss Element Stiiffness matrix
