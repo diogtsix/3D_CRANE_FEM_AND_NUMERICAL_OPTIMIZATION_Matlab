@@ -6,9 +6,9 @@ classdef craneTrussElementsTest < matlab.unittest.TestCase
         nodeNum = {32};
         scaleFactor = {150};
         
-        %Available options are : undeformedDeformedCrane, axisDisplacements
+        %Available options are : undeformedDeformed, axisDisplacements
         % strains, stresses, visualizeAll
-        visualizeOption = {"undeformedDeformed"};  
+        visualizeOption = {"visualizeAll"};  
     end
     
 
