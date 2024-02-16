@@ -33,6 +33,11 @@ classdef postProcessor < generic
         
         function visualizeAll(obj)
             
+            dataobject.library.postProcessorUtils.undeformedDeformedCrane(obj)
+            dataobject.library.postProcessorUtils.axisDisplacements(obj)
+            dataobject.library.postProcessorUtils.strains(obj)
+            dataobject.library.postProcessorUtils.stresses(obj)
+            
         end
         
         function undeformedDeformed(obj)
