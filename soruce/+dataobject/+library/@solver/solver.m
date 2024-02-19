@@ -11,7 +11,9 @@ classdef solver < generic
         strainMatrix
         stressMatrix
         reactionMatrix
-        totalReaction
+        
+        totalReactionForce
+        totalReactionTorque
     end
     
     methods
@@ -28,7 +30,8 @@ classdef solver < generic
             obj.strainMatrix = [];
             obj.stressMatrix = [];
             obj.reactionMatrix = [];
-            obj.totalReaction = [];
+            obj.totalReactionForce = [];
+            obj.totalReactionTorque = [];
             
             obj.globalStiffnessMatrix = obj.stiffnessMatrix();
             
@@ -47,7 +50,7 @@ classdef solver < generic
         
         function obj = structuralCalculations(obj)
             % Calculate Displacement, Strains, Stresses, Reactions
-
+            
             obj = dataobject.library.solverUtils.structuralCalculations(obj);
         end
     end

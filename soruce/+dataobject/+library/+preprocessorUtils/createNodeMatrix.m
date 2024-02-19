@@ -113,9 +113,18 @@ ropes=4;
 head=13;
 numOfElementsTruss = i*6+cubes+base+head+ropes;
 obj.number_of_elements = numOfElementsTruss ;
-obj.surfaceForEqualWeight = 0; 
+obj.surfaceForEqualWeight = 0;
 
 if obj.type_of_elements == "frame"
+    
+    %Create a free node for the FRAME crane
+    obj.freeNode = dataobject.library.node.define(...
+        "boundary_condition",  zeros(1,6), ...
+        "cordinates_in_mm",(obj.element_properties.rope_rigid_point_x_pos + 2*L)*ones(1,6), ...
+        "displacedCoord_in_mm",  zeros(1,6) , ...
+        "force_in_N", zeros(1,6) , ...
+        "id_global",  obj.number_of_nodes +1);
+    
     cubes=(i-1)*4;
     base=5;
     head=9;
@@ -128,7 +137,7 @@ if obj.type_of_elements == "frame"
     
     ny = obj.number_of_elements - 4;
     obj.surfaceForEqualWeight = ((numOfElementsTruss - ny)*Ad +ny*Ay) / (ny);
-
+    
 end
 
 

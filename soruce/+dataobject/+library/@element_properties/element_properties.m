@@ -9,13 +9,14 @@ classdef element_properties < generic
         crane_angle
         rope_rigid_point_z_pos
         rope_rigid_point_x_pos
+        poissonRatio
         
     end
     
     methods
         function obj = element_properties(Young_modulus_E,diagonal_rods_surface, ...
                 non_diagonal_rods_surface,rod_length,crane_angle, rope_rigid_point_z_pos, ...
-                rope_rigid_point_x_pos )
+                rope_rigid_point_x_pos, poissonRatio )
             %Constructor
             obj.Young_modulus_E = Young_modulus_E;
             obj.diagonal_rods_surface = diagonal_rods_surface;
@@ -24,7 +25,7 @@ classdef element_properties < generic
             obj.crane_angle = crane_angle;
             obj.rope_rigid_point_z_pos = rope_rigid_point_z_pos;
             obj.rope_rigid_point_x_pos = rope_rigid_point_x_pos;
-            
+            obj.poissonRatio = poissonRatio;
         end
     end
     
@@ -39,7 +40,7 @@ classdef element_properties < generic
                 options.crane_angle_in_rad (1,1) {mustBeReal} = 1.0926
                 options.rope_rigid_point_z_pos_in_mm (1,1){mustBePositive} = 1210 ;
                 options.rope_rigid_point_x_pos_in_mm (1,1){mustBePositive} = 1944 ;
-                
+                options.poissonRatio (1,1) {mustBeReal} = 0.3
                 
             end
             obj = feval(mfilename('class'),...
@@ -49,7 +50,8 @@ classdef element_properties < generic
                 options.rod_length_in_mm, ...
                 options.crane_angle_in_rad, ...
                 options.rope_rigid_point_z_pos_in_mm, ...
-                options.rope_rigid_point_x_pos_in_mm);
+                options.rope_rigid_point_x_pos_in_mm, ...
+                options.poissonRatio);
         end
     end
 end

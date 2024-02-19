@@ -31,7 +31,7 @@ classdef node < generic
                 options.id_local (1,1){mustBeReal} = 0;
                 options.id_global (1,1){mustBeReal} = 0;
                 options.cordinates_in_mm {mustBeReal} = [0 0 0];
-                options.displacedCoord_in_mm {mustBeReal} = [0 0 0];
+                options.displacedCoord_in_mm {mustBeReal} = [0 0 0 0 0 0];
                 options.boundary_condition {mustBeReal} = [0 0 0];
                 options.force_in_N {mustBeReal} = [0 0 0];
                 
