@@ -8,6 +8,7 @@ classdef preprocessor < generic
         number_of_elements
         elements_matrix
         type_of_elements
+        surfaceForEqualWeight
     end
     properties
         %class property
@@ -18,13 +19,14 @@ classdef preprocessor < generic
     methods
         function obj = preprocessor(number_of_nodes,node_matrix, number_of_elements, ...
                 elements_matrix, type_of_elements, ...
-                element_properties)
+                surfaceForEqualWeight, element_properties)
             %PREPROCESSOR Constructor
             obj.number_of_nodes = number_of_nodes;
             obj.node_matrix =  node_matrix ;
             obj.number_of_elements = number_of_elements;
             obj.elements_matrix = elements_matrix ;
             obj.type_of_elements = type_of_elements;
+            obj.surfaceForEqualWeight = surfaceForEqualWeight;
             
             obj.element_properties = element_properties;
             
@@ -72,7 +74,8 @@ classdef preprocessor < generic
                 options.node_matrix = [];
                 options.number_of_elements (1,1) {mustBeReal} = 122;
                 options.elements_matrix = [] ;
-                options.type_of_elements string  = "truss only"
+                options.type_of_elements string  = "truss"
+                options.surfaceForEqualWeight {mustBeReal}= 0
                 options.element_properties dataobject.library.element_properties = ...
                     dataobject.library.element_properties.define();
             end
@@ -82,6 +85,7 @@ classdef preprocessor < generic
                 options.number_of_elements, ...
                 options.elements_matrix, ...
                 options.type_of_elements, ...
+                options.surfaceForEqualWeight, ...
                 options.element_properties);
         end
     end

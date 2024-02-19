@@ -30,10 +30,10 @@ classdef node < generic
             arguments
                 options.id_local (1,1){mustBeReal} = 0;
                 options.id_global (1,1){mustBeReal} = 0;
-                options.cordinates_in_mm (1,3) {mustBeReal} = [0 0 0];
-                options.displacedCoord_in_mm (1,3) {mustBeReal} = [0 0 0];
-                options.boundary_condition (1,3) {mustBeReal} = [0 0 0];
-                options.force_in_N (1,3) {mustBeReal} = [0 0 0];
+                options.cordinates_in_mm {mustBeReal} = [0 0 0];
+                options.displacedCoord_in_mm {mustBeReal} = [0 0 0];
+                options.boundary_condition {mustBeReal} = [0 0 0];
+                options.force_in_N {mustBeReal} = [0 0 0];
                 
             end
             obj = feval(mfilename('class'),...
