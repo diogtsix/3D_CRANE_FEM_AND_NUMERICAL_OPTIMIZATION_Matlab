@@ -56,13 +56,20 @@ end
 end
 
 function obj = reactionMatrix(obj, C)
+dofs = numel(obj.preprocessor.node_matrix(1).cordinates);
+
 
 obj.reactionMatrix = C * obj.globalDsiplacementVector;
 
-reactions = reshape(obj.reactionMatrix, 3,[])';
-obj.totalReaction = sqrt(reactions(:,1).^2+reactions(:,2).^2+reactions(:,3).^2);
+reactions = reshape(obj.reactionMatrix, dofs,[])';
 
-U = reshape(obj.globalDsiplacementVector,3,[]);
+obj.totalReactionForce = sqrt(reactions(:,1).^2+reactions(:,2).^2+reactions(:,3).^2);
+
+if obj.preprocessor.type_of_elements == "frame"
+    obj.totalReactionTorque = sqrt(reactions(:,4).^2+reactions(:,5).^2+reactions(:,6).^2);  
+end
+
+U = reshape(obj.globalDsiplacementVector,dofs,[]);
 obj.displacedNodeMatrix = U';
 end
 

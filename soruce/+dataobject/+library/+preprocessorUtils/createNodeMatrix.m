@@ -45,6 +45,9 @@ headCoords = [L/2, -L/2, (i+1)*L;
 for idx = 1:3
     nodeMatrix(headIndices(idx)) = dataobject.library.node.define("id_global", headIndices(idx));
     nodeMatrix(headIndices(idx)).cordinates = headCoords(idx, :);
+    
+    
+    
 end
 %% Ropes
 
@@ -64,6 +67,7 @@ for idx = 1:numel(ropeIndices)
     end
 end
 
+
 %% Boundary Conditions
 for idx = [1 ropeIndices]
     nodeMatrix(idx).boundary_condition(:) = 1 ;
@@ -75,6 +79,16 @@ end
 
 %% Force (I need to review it latter)
 nodeMatrix(29).force(3) = 0;
+
+%% Add elements to cordinates if frame
+if obj.type_of_elements == "frame"
+    for ii = 1:obj.number_of_nodes
+        nodeMatrix(ii).cordinates = [nodeMatrix(ii).cordinates 0 0 0];
+        nodeMatrix(ii).displacedCoord = [nodeMatrix(ii).displacedCoord 0 0 0];
+        nodeMatrix(ii).boundary_condition = [nodeMatrix(ii).boundary_condition 0 0 0];
+        nodeMatrix(ii).force = [nodeMatrix(ii).force 0 0 0];
+    end
+end
 
 %% Crane Rotation
 
@@ -88,12 +102,42 @@ end
 
 %% Crane Translation
 for idx = 1: obj.number_of_nodes-3
-        nodeMatrix(idx).cordinates(1) = nodeMatrix(idx).cordinates(1) + obj.element_properties.rope_rigid_point_x_pos;             
+    nodeMatrix(idx).cordinates(1) = nodeMatrix(idx).cordinates(1) + obj.element_properties.rope_rigid_point_x_pos;
 end
 
-%% Calculate Num of elements 
+%% Calculate Num of elements
+
 cubes=(i-1)*12;
 base=9;
 ropes=4;
 head=13;
-obj.number_of_elements = i*6+cubes+base+head+ropes;
+numOfElementsTruss = i*6+cubes+base+head+ropes;
+obj.number_of_elements = numOfElementsTruss ;
+obj.surfaceForEqualWeight = 0;
+
+if obj.type_of_elements == "frame"
+    
+    %Create a free node for the FRAME crane
+    obj.freeNode = dataobject.library.node.define(...
+        "boundary_condition",  zeros(1,6), ...
+        "cordinates_in_mm",(obj.element_properties.rope_rigid_point_x_pos + 2*L)*ones(1,6), ...
+        "displacedCoord_in_mm",  zeros(1,6) , ...
+        "force_in_N", zeros(1,6) , ...
+        "id_global",  obj.number_of_nodes +1);
+    
+    cubes=(i-1)*4;
+    base=5;
+    head=9;
+    ropes=4;
+    planes=i*4;
+    obj.number_of_elements = cubes+ropes+head+base+planes;
+    
+    Ay = obj.element_properties.non_diagonal_rods_surface ;
+    Ad = obj.element_properties.diagonal_rods_surface ;
+    
+    ny = obj.number_of_elements - 4;
+    obj.surfaceForEqualWeight = ((numOfElementsTruss - ny)*Ad +ny*Ay) / (ny);
+    
+end
+
+
