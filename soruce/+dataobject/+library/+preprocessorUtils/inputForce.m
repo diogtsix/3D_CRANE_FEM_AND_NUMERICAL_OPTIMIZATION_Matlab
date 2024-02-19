@@ -70,7 +70,7 @@ nodeCoordinatesMatrix = arrayfun(@(n) n.cordinates, obj.node_matrix, 'UniformOut
 nodeCoordinatesMatrix = vertcat(nodeCoordinatesMatrix{:});
 
 % Use ismember to find the index of the node with the given coordinates
-[~, nodeIndex] = ismember(info.Position, nodeCoordinatesMatrix, 'rows');
+[~, nodeIndex] = ismember(info.Position, nodeCoordinatesMatrix(:,1:3), 'rows');
 
 % Apply the force to the corresponding node
 obj.node_matrix(nodeIndex).force(forceInput(2)) = forceInput(1);
