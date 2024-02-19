@@ -37,7 +37,12 @@ end
 for i = 1:numel(elementArray)
     node1 = elementArray(i).nodes(1).(coord);
     node2 = elementArray(i).nodes(2).(coord);
-    lineWidth = 2*(elementArray(i).surface == Ay) + 0.5*(elementArray(i).surface ~= Ay);
+    if obj.type_of_elements == "truss"
+        lineWidth = 2*(elementArray(i).surface == Ay) + 0.5*(elementArray(i).surface ~= Ay);
+    elseif obj.type_of_elements == "frame"
+        lineWidth = 2;
+    end
+    
     if isempty(lineType)
         line([node1(1), node2(1)], [node1(2), node2(2)], [node1(3), node2(3)], 'LineWidth', lineWidth)
     else

@@ -4,6 +4,8 @@ range = linspace(0, 1, 256);
 
 Max = max(scale);
 Min = min(scale);
+dofs = numel(obj.node_matrix(1).cordinates);
+
 
 % Preallocate arrays for vertices and colors
 vertices = zeros(obj.number_of_elements * 2, 3);
@@ -19,8 +21,8 @@ for i = 1:obj.number_of_elements
     
     
     % Coordinates
-    vertices(2*i-1, :) = obj.node_matrix(node1).displacedCoord;
-    vertices(2*i, :) = obj.node_matrix(node2).displacedCoord;
+    vertices(2*i-1, :) = obj.node_matrix(node1).displacedCoord(1:3);
+    vertices(2*i, :) = obj.node_matrix(node2).displacedCoord(1:3);
     
     % Colors
     vertexColors(2*i-1, :) = interp1(range, ColorMap, ColorMin);
