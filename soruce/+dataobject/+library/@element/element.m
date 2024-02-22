@@ -7,24 +7,26 @@ classdef element < generic
         surface
         elastic_module
         element_type % Type = Beam or Rod or Rope(ropes are modelled as elements)
+        materialDensity
         
     end
     
     properties (Dependent)
         length          % Length of the element, dynamically calculated
         deformedLength  % deformedLength of the Deformed element, dynamically calculated
+        elementWeight
     end
     
     methods
         function obj = element(element_id,nodes, ...
-                surface,elastic_module,element_type)
+                surface,elastic_module,element_type, materialDensity)
             %Constructor
             obj.element_id = element_id;
             obj.nodes = nodes;
             obj.surface = surface;
             obj.elastic_module = elastic_module;
             obj.element_type = element_type;
-            
+            obj.materialDensity = materialDensity;
         end
         
         function length = get.length(obj)
@@ -49,6 +51,11 @@ classdef element < generic
             end
         end
         
+        function elementWeight = get.elementWeight(obj)
+            
+             elementWeight = obj.materialDensity* obj.surface * obj.length; 
+        end
+        
     end
     
     
@@ -61,7 +68,7 @@ classdef element < generic
                 options.surface_in_mm2 (1,1) {mustBeReal} = 1000 ;
                 options.elastic_module_in_N_mm2 (1,1) {mustBeReal} = 210000; %N/(mm^2)
                 options.element_type  = "Truss" ;
-                
+                options.materialDensity (1,1) {mustBeReal} = 8960;
                 
             end
             obj = feval(mfilename('class'),...
@@ -69,7 +76,8 @@ classdef element < generic
                 options.nodes, ...
                 options.surface_in_mm2, ...
                 options.elastic_module_in_N_mm2, ...
-                options.element_type);
+                options.element_type, ...
+                options.materialDensity);
         end
         
     end
