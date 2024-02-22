@@ -11,7 +11,6 @@ classdef optimization < generic
         lowerBound
         upperBound
         nonLinearConst %function of non linear const
-        objectiveFunction % function of my objFunction
         optimizationMethod
         structure % For our case it's the crane
     end
@@ -19,7 +18,7 @@ classdef optimization < generic
     methods
         function obj = optimization(initialPoint,linearConstMatA, ...
                 linearConstVecb, linearConstMatAeq, linearConstVecbeq, ...
-                lowerBound, upperBound, nonLinearConst, objectiveFunction, ...
+                lowerBound, upperBound, nonLinearConst, ...
                 optimizationMethod, structure)
             
             obj.initialPoint = initialPoint ;
@@ -30,7 +29,6 @@ classdef optimization < generic
             obj.lowerBound = lowerBound ;
             obj.upperBound = upperBound ;
             obj.nonLinearConst = nonLinearConst ;
-            obj.objectiveFunction = objectiveFunction ;
             obj.optimizationAlgorithm = optimizationMethod ;
             obj.structure = structure;
             
@@ -44,16 +42,22 @@ classdef optimization < generic
             lb = obj.lowerBound ; % lowerBound
             ub = obj.upperBound ; % UpperBound
             xo = obj.initialPoint; %Initial Surfaces for the elements
-            A = obj.linearConstMatA ;       
+            A = obj.linearConstMatA ;
             b= obj.linearConstVecb ;
             beq= obj.linearConstVecbeq ;
             Aeq= obj.linearConstMatAeq ;
             
-           [Surface,Weight,exitflag,output,lambda,grad,hessian]= ...
-               fmincon(@functionA,xo,A,b,Aeq,beq,lb,ub,@const,options1);
- 
+            [Surface,Weight,exitflag,output,lambda,grad,hessian]= ...
+                fmincon(@objectiveFunction,xo,A,b,Aeq,beq,lb,ub,@const,options1);
+            
         end
         
+    end
+    methods
+        function Weight = objectiveFunction(surfaces, obj)
+            
+            
+        end
     end
     
     methods (Static)
@@ -67,7 +71,6 @@ classdef optimization < generic
                 options.lowerBound  = 1*(7*1e-3)*ones(122,1);
                 options.upperBound  = (6.6*1e-6)*ones(122,1);
                 options.nonLinearConst  = [];
-                options.objectiveFunction  = [];
                 options.optimizationMethod  = 'interior-point';
                 options.structure dataobject.library.preprocessor = ...
                     dataobject.library.preprocessor.define();
@@ -81,7 +84,6 @@ classdef optimization < generic
                 options.lowerBound, ...
                 options.upperBound, ...
                 options.nonLinearConst, ...
-                options.objectiveFunction, ...
                 options.optimizationMethod, ...
                 optios.structure);
         end

@@ -53,7 +53,7 @@ classdef element < generic
         
         function elementWeight = get.elementWeight(obj)
             
-             elementWeight = obj.materialDensity* obj.surface * obj.length; 
+             elementWeight = obj.materialDensity* obj.surface * obj.length*(1e-3)*(1e-6); 
         end
         
     end
@@ -68,7 +68,7 @@ classdef element < generic
                 options.surface_in_mm2 (1,1) {mustBeReal} = 1000 ;
                 options.elastic_module_in_N_mm2 (1,1) {mustBeReal} = 210000; %N/(mm^2)
                 options.element_type  = "Truss" ;
-                options.materialDensity (1,1) {mustBeReal} = 8960;
+                options.materialDensity_in_kg_m3 (1,1) {mustBeReal} = 8960;
                 
             end
             obj = feval(mfilename('class'),...
@@ -77,7 +77,7 @@ classdef element < generic
                 options.surface_in_mm2, ...
                 options.elastic_module_in_N_mm2, ...
                 options.element_type, ...
-                options.materialDensity);
+                options.materialDensity_in_kg_m3);
         end
         
     end

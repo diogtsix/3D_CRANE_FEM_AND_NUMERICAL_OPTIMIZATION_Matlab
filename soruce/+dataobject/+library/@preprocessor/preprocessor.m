@@ -79,7 +79,7 @@ classdef preprocessor < generic
     methods 
         function craneWeight = get.craneWeight(obj)
             
-            craneWeight = 
+            craneWeight = sum(arrayfun(@(x) x.elementWeight, obj.elements_matrix));
         end
     end
     methods (Static)
