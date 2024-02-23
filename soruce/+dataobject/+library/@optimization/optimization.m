@@ -13,13 +13,18 @@ classdef optimization < generic
         nonLinearConst %function of non linear const
         optimizationMethod
         structure % For our case it's the crane
+        staticSolution % Solution of static crane
+        
+        initialDisplacementMat
+        initialStressMat
+        initialStrainMat
     end
     
     methods
         function obj = optimization(initialPoint,linearConstMatA, ...
                 linearConstVecb, linearConstMatAeq, linearConstVecbeq, ...
                 lowerBound, upperBound, nonLinearConst, ...
-                optimizationMethod, structure)
+                optimizationMethod, structure, staticSolution)
             
             obj.initialPoint = initialPoint ;
             obj.linearConstMatA = linearConstMatA ;
@@ -29,9 +34,14 @@ classdef optimization < generic
             obj.lowerBound = lowerBound ;
             obj.upperBound = upperBound ;
             obj.nonLinearConst = nonLinearConst ;
-            obj.optimizationAlgorithm = optimizationMethod ;
+            obj.optimizationMethod = optimizationMethod ;
             obj.structure = structure;
+            obj.staticSolution = staticSolution;
             
+            % Initial structural values to insert in the nonLinCOnst
+            obj.initialDisplacementMat = obj.staticSolution.displacedNodeMatrix ;
+            obj.initialStressMat = obj.staticSolution.stressMatrix;
+            obj.initialStrainMat = obj.staticSolution.strainMatrix;
         end
     end
     
@@ -39,41 +49,64 @@ classdef optimization < generic
         function [Surface,Weight,exitflag,output,lambda,grad,hessian] = ...
                 optimizationAlgorithm(obj)
             
+            %Initial Surfaces for the elements
+            xo = arrayfun(@(x) x.surface, obj.structure.elements_matrix);
+            xo = xo' ;
+            
             lb = obj.lowerBound ; % lowerBound
             ub = obj.upperBound ; % UpperBound
-            xo = obj.initialPoint; %Initial Surfaces for the elements
+            
             A = obj.linearConstMatA ;
             b= obj.linearConstVecb ;
             beq= obj.linearConstVecbeq ;
             Aeq= obj.linearConstMatAeq ;
+            option = optimoptions('fmincon','Algorithm', ...
+                obj.optimizationMethod ,'Display','iter');
+            
+            % Adapt the objective function to the form expected by fmincon
+            objFun = @(surfaces) obj.objectiveFunction(surfaces);
+            
+            % Adapt the objective function to the form expected by fmincon
+            nonLinCon = @(surfaces) obj.nonLinCon(surfaces);
             
             [Surface,Weight,exitflag,output,lambda,grad,hessian]= ...
-                fmincon(@objectiveFunction,xo,A,b,Aeq,beq,lb,ub,@const,options1);
+                fmincon(objFun,xo,A,b,Aeq,beq,lb,ub,nonLinCon,option);
             
         end
         
     end
     methods
-        function Weight = objectiveFunction(surfaces, obj)
+        function Weight = objectiveFunction( obj, surfaces)
             
             
+            Weight = dataobject.library.optimizationUtils.objectiveFunction(surfaces);
         end
+        
+        function [c,ceq] = nonLinCon(obj, surfaces)
+            
+            
+            [c,ceq] = dataobject.library.optimizationUtils.nonLinCon(obj, surfaces);
+        end
+        
     end
     
     methods (Static)
         function obj = define(options)
             arguments
-                options.initialPoint = 6*(1e-04)*ones(1,122);
+                options.initialPoint = 600*ones(1,122);
                 options.linearConstMatA = [];
                 options.linearConstVecb  = [];
                 options.linearConstMatAeq = [] ;
                 options.linearConstVecbeq  = [];
-                options.lowerBound  = 1*(7*1e-3)*ones(122,1);
-                options.upperBound  = (6.6*1e-6)*ones(122,1);
+                options.lowerBound  = 300*ones(122,1);
+                options.upperBound  = 1000*ones(122,1);
                 options.nonLinearConst  = [];
                 options.optimizationMethod  = 'interior-point';
                 options.structure dataobject.library.preprocessor = ...
                     dataobject.library.preprocessor.define();
+                options.staticSolution dataobject.library.solver = ...
+                    dataobject.library.solver.define("preprocessor", ...
+                    dataobject.library.preprocessor.define());
             end
             obj = feval(mfilename('class'),...
                 options.initialPoint, ...
@@ -85,7 +118,8 @@ classdef optimization < generic
                 options.upperBound, ...
                 options.nonLinearConst, ...
                 options.optimizationMethod, ...
-                optios.structure);
+                options.structure, ...
+                options.staticSolution);
         end
     end
     
