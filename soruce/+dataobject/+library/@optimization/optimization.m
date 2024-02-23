@@ -47,7 +47,7 @@ classdef optimization < generic
     
     methods
         function [Surface,Weight,exitflag,output,lambda,grad,hessian] = ...
-                optimizationAlgorithm(obj)
+                optimizeSurfaceOnly(obj)
             
             %Initial Surfaces for the elements
             xo = arrayfun(@(x) x.surface, obj.structure.elements_matrix);
@@ -74,6 +74,11 @@ classdef optimization < generic
             
         end
         
+        
+        function [Surface,Weight,exitflag,output,lambda,grad,hessian] = ...
+                optimizeSurfaceAndMaterial(obj)
+            
+        end
     end
     methods
         function Weight = objectiveFunction( obj, surfaces)
