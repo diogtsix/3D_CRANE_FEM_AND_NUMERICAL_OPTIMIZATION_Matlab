@@ -115,20 +115,25 @@ classdef optimization < generic
             obj.replaceOptimizedValues(Surface)
         end
     end
-    %% Method for Surface Optimization Only
+    %% Method for Optimization Only
     methods
         function Weight = objectiveFunction( obj, x0)
             
             if length(x0) == obj.structure.number_of_elements
                 Weight = dataobject.library.optimizationUtils.objectiveFunction(x0);
             elseif length(x0) > obj.structure.number_of_elements
-                Weight = dataobject.library.optimizationUtils.objectiveFunction2(x0, obj);  
+                Weight = dataobject.library.optimizationUtils.objectiveFunction2(x0, obj);
             end
             
         end
         function [c,ceq] = nonLinCon(obj, x0)
-            
-            [c,ceq] = dataobject.library.optimizationUtils.nonLinCon(obj, x0);
+            if length(x0) == obj.structure.number_of_elements
+                
+                [c,ceq] = dataobject.library.optimizationUtils.nonLinCon(obj, x0);
+            elseif length(x0) > obj.structure.number_of_elements
+                [c,ceq] = dataobject.library.optimizationUtils.nonLinCon2(obj, x0);
+
+            end
         end
     end
     
