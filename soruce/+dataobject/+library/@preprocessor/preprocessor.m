@@ -16,6 +16,11 @@ classdef preprocessor < generic
         element_properties
     end
     
+    properties (Dependent)
+        craneWeight
+    end
+    
+    
     
     methods
         function obj = preprocessor(number_of_nodes,node_matrix, number_of_elements, ...
@@ -69,6 +74,14 @@ classdef preprocessor < generic
         end
     end
     
+    %% Calculate crane's Weight
+    
+    methods 
+        function craneWeight = get.craneWeight(obj)
+            
+            craneWeight = sum(arrayfun(@(x) x.elementWeight, obj.elements_matrix));
+        end
+    end
     methods (Static)
         function obj = define(options)
             arguments
