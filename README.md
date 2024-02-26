@@ -27,9 +27,8 @@ MATLAB Unit Testing Framework: For implementing and executing unit tests.
 
 # How to Use
 Clone the Repository: Clone this repository to your local machine to get started with the projects.
-Run the FEM Analysis: Navigate to the FEM project directory and execute the main script to perform structural analysis of the crane.
-Optimization: Access the optimization project to adjust design parameters and run optimization algorithms.
-Testing: Run the provided tests to validate the functionality of different components.
+Run the FEM Analysis: Navigate to the FEM project directory and execute the main.m script inside the "run" folder. Options will appear and guide you through all the projects.
+Testing: To run a specific test, navigate to the +tests folder.
 
 Contributions and Feedback
 Contributions to this project are welcome! Feel free to fork the repository and submit pull requests. For bugs, questions, or comments, please open an issue in this repository.
