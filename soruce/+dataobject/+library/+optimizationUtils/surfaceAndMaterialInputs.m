@@ -1,4 +1,4 @@
-function [xo, lb, ub] = surfaceAndMaterialInputs(obj, materialCatalog)
+function [xo, lb, ub, factors] = surfaceAndMaterialInputs(obj, materialCatalog)
 
 
 %% Construct Initial Point for : Surface - Density - Elasticity
@@ -23,6 +23,9 @@ density0 = density/ max(density);
 elasticity0 = elasticity/ max(elasticity);
 
 xo = [surface0 density0 elasticity0];
+factors = struct("surface", max(surface), ...
+    "density",max(density) , ...
+    "elasticity", max(elasticity));
 
 %% Create Lower And Upper Bound
 
@@ -43,7 +46,7 @@ ub2=ub2/max(density);
 lb3=lb3/max(elasticity);
 ub3=ub3/max(elasticity);
 
-lb=[lb1 lb2 lb3];
-ub=[ub1 ub2 ub3];
+lb=[lb1 lb2 lb3]/1.1;
+ub=[ub1 ub2 ub3]*1.1;
 end
 

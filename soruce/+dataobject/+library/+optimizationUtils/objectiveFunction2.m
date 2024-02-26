@@ -1,19 +1,16 @@
 function Weight = objectiveFunction2(x0, obj)
 
-materialCatalog = dataobject.library.optimizationUtils.materilaCatalog();
-d = arrayfun(@(m) m.density_in_kg_m3, materialCatalog.material);
-e = arrayfun(@(m) m.YoungModulus_in_GPa, materialCatalog.material);
-A0 = arrayfun(@(x) x.surface, obj.structure.elements_matrix);
-
-
+fA0 = obj.normalizationFactors.surface();
+fd = obj.normalizationFactors.density();
+fe = obj.normalizationFactors.elasticity();
 %% Extract Vectors
 surfaces = x0(1:obj.structure.number_of_elements);
 densitys = x0(obj.structure.number_of_elements + 1: 2 *obj.structure.number_of_elements);
 elasticities = x0(1 + obj.structure.number_of_elements*2: 3 * obj.structure.number_of_elements);
 %% Remove Normalization
-surfaces = surfaces * max(A0); 
-densitys = densitys * max(d); 
-elasticities = elasticities * max(e); 
+surfaces = surfaces * fA0; 
+densitys = densitys * fd; 
+elasticities = elasticities * fe; 
 
 %% Replace Surface
 obj.structure.elements_matrix = arrayfun(@(element, surface) setSurface(element, surface), ...

@@ -18,13 +18,17 @@ classdef optimization < generic
         initialDisplacementMat
         initialStressMat
         initialStrainMat
+        
+        normalizationFactors
+        desiredCrossSections
     end
     
     methods
         function obj = optimization(initialPoint,linearConstMatA, ...
                 linearConstVecb, linearConstMatAeq, linearConstVecbeq, ...
                 lowerBound, upperBound, nonLinearConst, ...
-                optimizationMethod, structure, staticSolution)
+                optimizationMethod, structure, staticSolution, ...
+                normalizationFactors, desiredCrossSections)
             
             obj.initialPoint = initialPoint ;
             obj.linearConstMatA = linearConstMatA ;
@@ -43,6 +47,8 @@ classdef optimization < generic
             obj.initialStressMat = obj.staticSolution.stressMatrix;
             obj.initialStrainMat = obj.staticSolution.strainMatrix;
             
+            obj.normalizationFactors = normalizationFactors;
+            obj.desiredCrossSections = desiredCrossSections;
             
         end
     end
@@ -74,10 +80,10 @@ classdef optimization < generic
                 'MaxFunctionEvaluations',13000);
             
             % Adapt the objective function to the form expected by fmincon
-            objFun = @(x0) obj.objectiveFunction(x0);
+            objFun = @(xo) obj.objectiveFunction(xo);
             
             % Adapt the objective function to the form expected by fmincon
-            nonLinCon = @(x0) obj.nonLinCon(x0);
+            nonLinCon = @(xo) obj.nonLinCon(xo);
             
             [OptimizedValues,Weight,exitflag,output,lambda,grad,hessian]= ...
                 fmincon(objFun,xo,A,b,Aeq,beq,lb,ub,nonLinCon,option);
@@ -86,12 +92,17 @@ classdef optimization < generic
         end
         
         %% Surface and Material optimization  by minimizing crane weight
-        function [Surface,Weight,exitflag,output,lambda,grad,hessian] = ...
+        function [OptimizedValues,Weight,exitflag,output,lambda,grad,hessian] = ...
                 optimizeSurfaceAndMaterial(obj)
             % Input Material Catalog
             materialCatalog = dataobject.library.optimizationUtils.materilaCatalog() ;
             
-            [xo, lb, ub] = dataobject.library.optimizationUtils.surfaceAndMaterialInputs(obj, materialCatalog);
+            [xo, lb, ub, factors] = dataobject.library.optimizationUtils.surfaceAndMaterialInputs(obj, materialCatalog);
+            
+            obj.lowerBound = lb; % lowerBound
+            obj.upperBound = ub; % UpperBound
+            % add factors to obj
+            obj.normalizationFactors = factors;
             
             A = obj.linearConstMatA ;
             b= obj.linearConstVecb ;
@@ -99,20 +110,20 @@ classdef optimization < generic
             Aeq= obj.linearConstMatAeq ;
             option = optimoptions('fmincon','Algorithm', ...
                 obj.optimizationMethod ,'Display','iter', ...
-                'FinDiffType','central', ...
-                'MaxFunctionEvaluations',13000);
+                'TolCon',1e-6,'StepTolerance',1e-8, ...
+                'MaxFunctionEvaluations',5000);
             
             
             % Adapt the objective function to the form expected by fmincon
-            objFun = @(surfaces) obj.objectiveFunction(surfaces);
+            objFun = @(xo) obj.objectiveFunction(xo);
             
             % Adapt the objective function to the form expected by fmincon
-            nonLinCon = @(surfaces) obj.nonLinCon(surfaces);
+            nonLinCon = @(xo) obj.nonLinCon(xo);
             
-            [Surface,Weight,exitflag,output,lambda,grad,hessian]= ...
+            [OptimizedValues,Weight,exitflag,output,lambda,grad,hessian]= ...
                 fmincon(objFun,xo,A,b,Aeq,beq,lb,ub,nonLinCon,option);
             
-            obj.replaceOptimizedValues(Surface)
+            obj.replaceOptimizedValues(OptimizedValues)
         end
     end
     %% Method for Optimization Only
@@ -131,15 +142,15 @@ classdef optimization < generic
                 
                 [c,ceq] = dataobject.library.optimizationUtils.nonLinCon(obj, x0);
             elseif length(x0) > obj.structure.number_of_elements
-                [c,ceq] = dataobject.library.optimizationUtils.nonLinCon2(obj, x0);
-
+                [c,ceq] = dataobject.library.optimizationUtils.nonLinCon2(x0, obj);
+                
             end
         end
     end
     
     %% Reokace Optimized Values
     methods
-        function obj = replaceOptimizedValues(obj, surfaces)
+        function obj = replaceOptimizedValues(obj, x0)
             % Ask User
             choice = questdlg('Do you want to replace the optimized surface values into the preprocessor object?', ...
                 'Replace Surfaces', ...
@@ -148,11 +159,31 @@ classdef optimization < generic
             % Handle response
             switch choice
                 case 'Yes'
-                    
-                    obj.structure.elements_matrix = arrayfun(@(element, surface) setSurface(element, surface), ...
-                        obj.structure.elements_matrix, surfaces', ...
-                        'UniformOutput', true);
-                    
+                    if length(x0) == obj.structure.number_of_elements
+                        
+                        obj.structure.elements_matrix = arrayfun(@(element, surface) setSurface(element, surface), ...
+                            obj.structure.elements_matrix, x0', ...
+                            'UniformOutput', true);
+                    elseif length(x0) > obj.structure.number_of_elements
+                        A = x0(1:obj.structure.number_of_elements);
+                        den = x0(obj.structure.number_of_elements + 1: 2 *obj.structure.number_of_elements);
+                        el = x0(1 + obj.structure.number_of_elements*2: 3 * obj.structure.number_of_elements);
+                        
+                        % Replace Surfaces
+                        obj.structure.elements_matrix = arrayfun(@(element, surface) setSurface(element, surface), ...
+                            obj.structure.elements_matrix, A', ...
+                            'UniformOutput', true);
+                        
+                        % Replace Density
+                        obj.structure.elements_matrix = arrayfun(@(element, materialDensity) setDensity(element, materialDensity), ...
+                            obj.structure.elements_matrix, den', ...
+                            'UniformOutput', true);
+                        
+                        % Replace Elasticity
+                        obj.structure.elements_matrix = arrayfun(@(element, elastic_module) setElasticity(element, elastic_module), ...
+                            obj.structure.elements_matrix, el', ...
+                            'UniformOutput', true);
+                    end
                     
                 case 'No'
                     disp('No changes made to the preprocessor object.');
@@ -161,6 +192,15 @@ classdef optimization < generic
             % Nested function to replace Surfaces
             function element = setSurface(element, surface)
                 element.surface = surface;
+            end
+            
+            
+            function element = setDensity(element, density)
+                element.materialDensity = density;
+            end
+            
+            function element = setElasticity(element, elasticity)
+                element.elastic_module = elasticity;
             end
             
         end
@@ -183,6 +223,8 @@ classdef optimization < generic
                 options.staticSolution dataobject.library.solver = ...
                     dataobject.library.solver.define("preprocessor", ...
                     dataobject.library.preprocessor.define());
+                options.normalizationFactors = [];
+                options.desiredCrossSections = [300:50:1550]
             end
             obj = feval(mfilename('class'),...
                 options.initialPoint, ...
@@ -195,7 +237,9 @@ classdef optimization < generic
                 options.nonLinearConst, ...
                 options.optimizationMethod, ...
                 options.structure, ...
-                options.staticSolution);
+                options.staticSolution, ...
+                options.normalizationFactors, ...
+                options.desiredCrossSections);
         end
     end
     
