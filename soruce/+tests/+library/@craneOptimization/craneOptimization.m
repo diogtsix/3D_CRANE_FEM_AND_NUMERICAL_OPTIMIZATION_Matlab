@@ -4,7 +4,7 @@ classdef craneOptimization < matlab.unittest.TestCase
     
     properties (TestParameter)
         nodeNum = {32};
-        scaleFactor = {150};
+        scaleFactor = {25};
         method = {'interior-point'};
         forceVal = {-20e3}; 
         
